@@ -45,9 +45,15 @@ function RS_Series (Mats::Array{Float64, 3}, Target::Array{Float64, 2})
     Sim
 end
 
-data_cor = dlmread("correlacao.txt"," ")
-data_cor = data_cor[:,2:end]           
-data_var = dlmread("varP.txt", " ")
-data_var = data_var[:,2:end]
 omega = dlmread("./G-target.csv","\t")
-mat_var, mat_corr = CorrVarCreate(data_var, data_cor)
+mat_cor = zeros(10, 10, 10000, 20)
+mat_var = zeros(10, 10, 10000, 20)
+for i in 1:20
+    dir =
+    "/home/diogro/MainProject/Modularidade/MatrizB/Direcional/IntensidadeSelecao/IntSel$(i*10)/" 
+    println(dir)
+    cor_aux = (dlmread("$(dir)correlacao.txt"," "))[:,2:end] 
+    var_aux = (dlmread("$(dir)varP.txt", " "))[:,2:end]
+    mat_var[:,:,:,i], mat_cor[:,:,:,i] = CorrVarCreate(var_aux, cor_aux)
+end
+Results = [RS_Series(mat_var[:,:,:,i], omega) for i in 1:20]
