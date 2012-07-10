@@ -59,4 +59,4 @@ function RS_Sel_Type (File::String)
     dlmwrite("RS_Results_$(File)", Results, ' ')
 end
 RS_Sel_Type("MinForModule")
-#RS_Sel_Type("Corridor")
+RS_Sel_Type("Corridor")
