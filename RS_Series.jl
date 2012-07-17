@@ -14,7 +14,8 @@ function CorrVarCreate(data_var::Array{Float64,2}, data_cor::Array{Float64,2})
         end
     end
     for k in 1:NP
-        mat_var[:,:,k] = mat_corr[:,:,k].*(data_var[k,:]'*data_var[k,:])
+        mat_var[:,:,k] =
+        mat_corr[:,:,k].*sqrt((data_var[k,:]'*data_var[k,:]))
     end
     mat_var, mat_corr
 end
@@ -46,6 +47,7 @@ function RS_Sel_Type (File::String)
     omega = dlmread("/home/diogro/julia-play/G-target.csv","\t")
     mat_cor = zeros(10, 10, 10000, 20)
     mat_var = zeros(10, 10, 10000, 20)
+    traits = zeros(10, 10000, 20)
     Results = zeros(10000, 20)
     for i in 1:20
         dir =
@@ -53,10 +55,32 @@ function RS_Sel_Type (File::String)
         println(dir)
         cor_aux = (dlmread("$(dir)correlacao.txt"," "))[:,2:end] 
         var_aux = (dlmread("$(dir)varP.txt", " "))[:,2:end]
+        traits = (dlmread("$(dir)tracos.txt", " "))[:,2:end]
         mat_var[:,:,:,i], mat_cor[:,:,:,i] = CorrVarCreate(var_aux, cor_aux)
         Results[:,i] = RS_Series(mat_var[:,:,:,i], omega)
     end
     dlmwrite("RS_Results_$(File)", Results, ' ')
 end
-RS_Sel_Type("MinForModule")
-RS_Sel_Type("Corridor")
+#RS_Sel_Type("MinForModule")
+#RS_Sel_Type("Corridor")
+File = "MinForModule"
+File = "IntensidadeSelecao"
+omega = dlmread("/home/diogro/julia-play/G-target.csv","\t")
+mat_cor = zeros(10, 10, 10000, 20)
+mat_var = zeros(10, 10, 10000, 20)
+traits = zeros(10, 10000, 20)
+betas = zeros(10000, 20)
+Results = zeros(10000, 20)
+for i in 1:20
+    dir =
+    "/home/diogro/MainProject/Modularidade/MatrizB/Direcional/$(File)/IntSel$(i*10)/" 
+    println(dir)
+    cor_aux = (dlmread("$(dir)correlacao.txt"," "))[:,2:end] 
+    var_aux = (dlmread("$(dir)varP.txt", " "))[:,2:end]
+    traits[:,:,i] = ((dlmread("$(dir)tracos.txt", " "))[:,2:end]')
+    mat_var[:,:,:,i], mat_cor[:,:,:,i] = CorrVarCreate(var_aux, cor_aux)
+    S = fill(i/100.,10)
+    for j in 1:10000
+        betas[j,i] =  mean(mat_var[:,:,j,i]\S)
+    end
+end
