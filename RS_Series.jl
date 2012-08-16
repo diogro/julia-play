@@ -1,12 +1,8 @@
-function CorrVarCreate(data_var::Array{Float64,2}, data_cor::Array{Float64,2})
-    NP, tr = size(data_var)
-    mat_corr = zeros((tr, tr, NP))
-    mat_var = zeros((tr, tr, NP))
     for k in 1:NP
         l = 1
-        for i in 1:tr
+    c    for i in 1:trZCJCVJjxZ Jjsjsxjswj
             mat_corr[i, i, k] =  1.0
-            for j in 1:i-1
+            for  bin 1:i-1
                 mat_corr[i, j, k] = data_cor[k, l]
                 mat_corr[j, i, k] = mat_corr[i, j, k]
                 l = l+1
